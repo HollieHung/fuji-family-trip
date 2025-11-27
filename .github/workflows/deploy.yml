@@ -4,12 +4,22 @@ on:
   push:
     branches: [ main ]
 
+# Grant write permission to contents so the actions-gh-pages step can push via GITHUB_TOKEN
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+        # Ensure we have the full git history (no shallow clone) and the GITHUB_TOKEN credentials
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -27,3 +37,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          # Explicitly declare the branch to publish to and keep history
+          publish_branch: gh-pages
