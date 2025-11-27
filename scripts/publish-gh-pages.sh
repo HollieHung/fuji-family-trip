@@ -14,6 +14,7 @@ if [ ! -d dist ]; then
   exit 1
 fi
 
+PROJECT_ROOT=$(pwd)
 REPO_URL="https://github.com/$REPO.git"
 if [ -n "${GH_TOKEN:-}" ]; then
   REPO_URL="https://$GH_TOKEN@github.com/$REPO.git"
@@ -22,7 +23,7 @@ fi
 git clone --depth 1 --branch gh-pages "$REPO_URL" "$TMPDIR" || git clone "$REPO_URL" "$TMPDIR"
 cd "$TMPDIR"
 git rm -rf . || true
-cp -r ../dist/* .
+cp -r "$PROJECT_ROOT/dist/"* .
 git add --all
 
 if git diff --staged --quiet; then
