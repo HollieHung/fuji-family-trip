@@ -29,8 +29,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Generate icons
+        run: npm run generate-icons || true
+
       - name: Build
         run: npm run build
+
+      - name: Validate build output
+        run: |
+          echo "=== dist contents ==="
+          ls -la dist
+          if [ ! -f dist/index.html ]; then
+            echo "dist/index.html missing" && exit 1
+          fi
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
