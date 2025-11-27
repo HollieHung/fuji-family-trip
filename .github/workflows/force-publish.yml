@@ -1,0 +1,36 @@
+name: Force Publish to gh-pages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate icons
+        run: npm run generate-icons || true
+
+      - name: Build
+        run: npm run build
+
+      - name: Force Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          # `allow_empty_commit` allows overwriting; for a fresh clean we use force push enforcement
+          keep_files: false
